@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#eef4f1">
+<title>Карта класса — 9 «Е»</title>
+<style>
+    /* =========================
+       БАЗОВЫЕ СТИЛИ И ПЕРЕМЕННЫЕ
+       ========================= */
+    :root {
+        --bg: #eef4f1;
+        --surface: #ffffff;
+        --surface-2: #f5f8f6;
+        --text: #18312b;
+        --muted: #6c7d77;
+        --line: #d9e3df;
+        --blue: #5d91b3;
+        --blue-dark: #376b8b;
+        --green: #5d8b68;
+        --green-dark: #3f6d4b;
+        --beige: #d7b887;
+        --wood: #bd8b55;
+        --wood-dark: #8f633b;
+        --board: #47745d;
+        --board-dark: #2f5845;
+        --danger: #c97979;
+        --shadow: 0 18px 45px rgba(48, 76, 67, .10);
+        --shadow-soft: 0 8px 22px rgba(48, 76, 67, .08);
+        --radius: 22px;
+    }
+
+    html.dark {
+        --bg: #101918;
+        --surface: #172321;
+        --surface-2: #1d2b28;
+        --text: #edf5f1;
+        --muted: #9db0aa;
+        --line: #30423e;
+        --blue: #79aeca;
+        --blue-dark: #9ac8df;
+        --green: #79a986;
+        --green-dark: #9bc5a4;
+        --beige: #a88961;
+        --wood: #9c7045;
+        --wood-dark: #704a2c;
+        --board: #315c48;
+        --board-dark: #244334;
+        --shadow: 0 18px 45px rgba(0, 0, 0, .25);
+        --shadow-soft: 0 8px 22px rgba(0, 0, 0, .18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background:
+            radial-gradient(circle at 8% 0%, rgba(93,145,179,.10), transparent 28%),
+            radial-gradient(circle at 92% 12%, rgba(93,139,104,.10), transparent 25%),
+            var(--bg);
+        transition: background .25s ease, color .25s ease;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .container { width: min(1440px, calc(100% - 32px)); margin: 0 auto; }
+
+    /* =========================
+       ШАПКА
+       ========================= */
+    header {
+        padding: 28px 0 20px;
+    }
+    .header-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 26px 28px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-soft);
+    }
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--green-dark);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+    .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 13%, transparent);
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.05; letter-spacing: -.035em; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill {
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+    .theme-btn {
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--text);
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        transition: transform .2s ease, background .2s ease;
+    }
+    .theme-btn:hover { transform: translateY(-2px); }
+
+    /* =========================
+       СТАРТОВОЕ УВЕДОМЛЕНИЕ
+       ========================= */
+    .notice-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: rgba(245, 248, 247, .97);
+        backdrop-filter: blur(12px);
+        animation: noticeIn .45s ease both;
+    }
+    html.dark .notice-screen { background: rgba(13, 20, 19, .97); }
+    .notice-box {
+        width: min(820px, 100%);
+        padding: clamp(28px, 5vw, 48px);
+        border: 1px solid rgba(194, 76, 76, .35);
+        border-radius: 26px;
+        background: var(--surface);
+        box-shadow: 0 25px 70px rgba(100, 45, 45, .16);
+        text-align: center;
+        animation: noticeBox .55s ease both;
+    }
+    .notice-label {
+        display: inline-block;
+        margin-bottom: 13px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(194, 76, 76, .10);
+        color: #b94f4f;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+    .notice-box h2 {
+        margin: 0 0 16px;
+        color: #b83f3f;
+        font-size: clamp(24px, 4vw, 34px);
+    }
+    .notice-box p {
+        max-width: 710px;
+        margin: 0 auto;
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.75;
+    }
+    .notice-timer {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .notice-progress {
+        height: 4px;
+        margin-top: 10px;
+        overflow: hidden;
+        border-radius: 99px;
+        background: rgba(194, 76, 76, .12);
+    }
+    .notice-progress::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #c75b5b;
+        transform-origin: left;
+        animation: progress 40s linear forwards;
+    }
+    .notice-confirm {
+        margin-top: 18px;
+        width: min(100%, 300px);
+        min-height: 48px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 13px;
+        background: #c75b5b;
+        color: white;
+        font-weight: 850;
+        font-size: 14px;
+        opacity: .45;
+        cursor: not-allowed;
+        transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+    .notice-confirm.ready {
+        opacity: 1;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(199, 91, 91, .22);
+    }
+    .notice-confirm.ready:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 11px 24px rgba(199, 91, 91, .28);
+    }
+    @keyframes noticeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes noticeBox {
+        from { opacity: 0; transform: translateY(14px) scale(.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes progress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    .notice-screen.hide {
+        animation: noticeOut .45s ease forwards;
+        pointer-events: none;
+    }
+    @keyframes noticeOut { to { opacity: 0; visibility: hidden; } }
+
+    /* =========================
+       НАВИГАЦИЯ ПО РАЗДЕЛАМ
+       ========================= */
+    .section-nav {
+        display: flex;
+        gap: 8px;
+        margin: 0 0 20px;
+        padding: 7px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: var(--shadow-soft);
+    }
+    .nav-btn {
+        flex: 1 0 auto;
+        min-height: 43px;
+        padding: 9px 16px;
+        border: 0;
+        border-radius: 11px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+        transition: background .2s, color .2s, transform .2s;
+    }
+    .nav-btn:hover { transform: translateY(-1px); color: var(--text); }
+    .nav-btn.active {
+        background: var(--green);
+        color: white;
+        box-shadow: 0 5px 12px rgba(63, 109, 75, .18);
+    }
+    .page-section { display: none; animation: panelIn .25s ease both; }
+    .page-section.active { display: block; }
+
+    /* =========================
+       ПОИСК
+       ========================= */
+    .search-section {
+        margin: 0 0 20px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+    }
+    .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .search-icon {
+        position: absolute;
+        left: 17px;
+        color: var(--muted);
+        pointer-events: none;
+        font-size: 19px;
+    }
+    #searchInput {
+        width: 100%;
+        height: 58px;
+        padding: 0 50px 0 48px;
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        outline: none;
+        color: var(--text);
+        background: var(--surface);
+        box-shadow: var(--shadow-soft);
+        transition: border-color .2s, box-shadow .2s;
+    }
+    #searchInput:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 14%, transparent), var(--shadow-soft);
+    }
+    .clear-search {
+        position: absolute;
+        right: 9px;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        display: none;
+    }
+    .clear-search:hover { background: var(--surface-2); }
+    .search-hint {
+        align-self: center;
+        padding: 0 7px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    /* Автодополнение */
+    .suggestions {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        display: none;
+        padding: 7px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        max-height: 280px;
+        overflow-y: auto;
+    }
+    .suggestion {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 12px;
+        border: 0;
+        border-radius: 11px;
+        background: transparent;
+        color: var(--text);
+        text-align: left;
+    }
+    .suggestion:hover { background: var(--surface-2); }
+    .suggestion small { color: var(--muted); }
+
+    /* =========================
+       ИНФОРМАЦИОННАЯ КАРТОЧКА
+       ========================= */
+    .info-panel {
+        display: none;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: linear-gradient(135deg, var(--surface), var(--surface-2));
+        border: 1px solid color-mix(in srgb, var(--blue) 35%, var(--line));
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-soft);
+        animation: panelIn .28s ease both;
+    }
+    .info-panel.show { display: block; }
+    @keyframes panelIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .info-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .student-title { margin: 0; font-size: 23px; }
+    .student-position { margin: 5px 0 0; color: var(--muted); }
+    .reset-btn {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 9px 13px;
+        font-weight: 700;
+    }
+    .reset-btn:hover { border-color: var(--blue); }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+    }
+    .info-item {
+        padding: 13px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 14px;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+    .info-item strong { font-size: 14px; }
+
+    /* =========================
+       СХЕМА КАБИНЕТА
+       ========================= */
+    .room-card, .map-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 12px;
+        padding: 21px 22px 0;
+    }
+    .section-heading h2 { margin: 0; font-size: 19px; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .room {
+        margin: 18px;
+        padding: 20px;
+        border-radius: 18px;
+        min-height: 300px;
+        position: relative;
+        overflow: hidden;
+        background:
+            linear-gradient(90deg, rgba(255,255,255,.45) 1px, transparent 1px) 0 0 / 44px 44px,
+            linear-gradient(rgba(255,255,255,.45) 1px, transparent 1px) 0 0 / 44px 44px,
+            #e6e0d3;
+        border: 1px solid #d5cdbd;
+    }
+    html.dark .room {
+        background:
+            linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px) 0 0 / 44px 44px,
+            linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0 / 44px 44px,
+            #30332f;
+        border-color: #454942;
+    }
+    .room-label {
+        position: absolute;
+        top: 11px;
+        left: 14px;
+        font-size: 11px;
+        font-weight: 800;
+        color: #6f746d;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    html.dark .room-label { color: #8f9891; }
+    .board {
+        position: absolute;
+        top: 34px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(54%, 610px);
+        height: 62px;
+        border-radius: 7px;
+        border: 6px solid #8d7250;
+        background: var(--board);
+        box-shadow: inset 0 0 0 2px var(--board-dark), 0 5px 9px rgba(0,0,0,.16);
+    }
+    .board::after {
+        content: "ДОСКА";
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: rgba(255,255,255,.65);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: .22em;
+    }
+    .teacher-table {
+        position: absolute;
+        top: 112px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 155px;
+        height: 40px;
+        border-radius: 6px 6px 9px 9px;
+        background: linear-gradient(#d7ad73, #ae7b48);
+        border: 2px solid var(--wood-dark);
+        box-shadow: 0 5px 8px rgba(0,0,0,.13);
+    }
+    .teacher-table::after {
+        content: "СТОЛ УЧИТЕЛЯ";
+        position: absolute;
+        left: 50%;
+        top: 46px;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        color: #7d7569;
+        font-size: 10px;
+        font-weight: 800;
+    }
+    .window {
+        position: absolute;
+        top: 42px;
+        width: 110px;
+        height: 72px;
+        border: 7px solid #b78f63;
+        background: linear-gradient(135deg, #bfe1eb 0%, #dff1ef 55%, #9dc8d2 100%);
+        box-shadow: inset 0 0 0 3px rgba(255,255,255,.55);
+    }
+    .window::before, .window::after { content:""; position:absolute; background:rgba(255,255,255,.7); }
+    .window::before { left:50%; top:0; bottom:0; width:3px; transform:translateX(-50%); }
+    .window::after { top:50%; left:0; right:0; height:3px; transform:translateY(-50%); }
+    .window-left { left: 18px; }
+    .window-right { right: 18px; }
+    .door {
+        position: absolute;
+        bottom: 18px;
+        right: 22px;
+        width: 74px;
+        height: 118px;
+        border: 5px solid #76583b;
+        border-bottom: 0;
+        border-radius: 7px 7px 0 0;
+        background: linear-gradient(90deg, #a77849, #c3955e, #a77849);
+    }
+    .door::after {
+        content: "ДВЕРЬ";
+        position: absolute;
+        bottom: -21px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #706b61;
+        font-size: 10px;
+        font-weight: 800;
+    }
+    .door::before {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: 55%;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #e4c98e;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.08);
+    }
+    .room-note {
+        position: absolute;
+        left: 20px;
+        bottom: 17px;
+        color: #77746c;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* =========================
+       КАРТА ПАРТ
+       ========================= */
+    .map-card { margin-top: 20px; padding-bottom: 22px; }
+    .map-wrap {
+        overflow-x: auto;
+        padding: 18px 22px 4px;
+    }
+    .map {
+        min-width: 1050px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 42px;
+        position: relative;
+    }
+    .row-column {
+        position: relative;
+    }
+    .row-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        color: var(--green-dark);
+        font-weight: 900;
+        font-size: 14px;
+    }
+    .row-title span:last-child {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+    }
+    .desk {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 76px;
+        margin-bottom: 14px;
+        border: 2px solid var(--wood-dark);
+        border-radius: 10px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #d6aa71, #bd8b55);
+        box-shadow: 0 6px 12px rgba(72, 54, 34, .12);
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .desk:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 16px rgba(72, 54, 34, .17);
+    }
+    .desk-number {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 900;
+        box-shadow: 0 3px 8px rgba(0,0,0,.08);
+    }
+    .seat {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 13px 8px 10px;
+        text-align: center;
+        color: #2f2417;
+        font-size: 12px;
+        line-height: 1.2;
+        font-weight: 800;
+        border-right: 2px solid rgba(93,61,32,.35);
+        background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.02));
+        transition: background .2s ease, transform .2s ease, color .2s ease;
+        user-select: none;
+    }
+    .seat:last-child { border-right: 0; }
+    .seat.empty {
+        color: #817c73;
+        background: rgba(130,130,130,.17);
+        font-size: 22px;
+    }
+    .seat.student-seat { cursor: pointer; }
+    .seat.student-seat:hover { background: rgba(255,255,255,.24); }
+    .seat.selected {
+        background: linear-gradient(145deg, #d8edf4, #b6d8e6);
+        color: #204f68;
+        box-shadow: inset 0 0 0 3px rgba(55,107,139,.5);
+        animation: chosen .35s ease;
+        z-index: 2;
+    }
+    html.dark .seat.selected {
+        background: linear-gradient(145deg, #315261, #294653);
+        color: #eaf8ff;
+    }
+    @keyframes chosen {
+        0% { transform: scale(.96); }
+        65% { transform: scale(1.035); }
+        100% { transform: scale(1); }
+    }
+
+    .front-marker, .back-marker {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        margin: 2px 0 10px;
+    }
+    .front-marker { justify-content: center; margin-bottom: 10px; }
+    .front-marker::before { content: "↑"; }
+    .back-marker { justify-content: center; margin-top: 3px; }
+    .back-marker::before { content: "↓"; }
+
+    /* =========================
+       ЛЕГЕНДА И ПОДВАЛ
+       ========================= */
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 0 22px;
+        margin-top: 2px;
+    }
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 11px;
+        border-radius: 10px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .legend-dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+    .dot-wood { background: var(--wood); }
+    .dot-selected { background: #b6d8e6; border: 1px solid var(--blue-dark); }
+    .dot-empty { background: #b6b6b6; }
+
+    footer {
+        padding: 22px 0 35px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 12px;
+    }
+
+    /* =========================
+       АДАПТИВНОСТЬ
+       ========================= */
+    @media (max-width: 850px) {
+        .container { width: min(100% - 18px, 1440px); }
+        header { padding-top: 10px; }
+        .header-card { align-items: flex-start; flex-direction: column; padding: 21px; }
+        .header-actions { width: 100%; justify-content: space-between; }
+        .search-section { grid-template-columns: 1fr; }
+        .search-hint { display: none; }
+        .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .room { min-height: 280px; }
+        .window { width: 82px; height: 58px; }
+        .window-left { left: 9px; }
+        .window-right { right: 9px; }
+        .board { width: 47%; }
+    }
+    @media (max-width: 520px) {
+        .info-grid { grid-template-columns: 1fr 1fr; }
+        .info-top { flex-direction: column; }
+        .reset-btn { width: 100%; }
+        .room { margin: 12px; padding: 10px; min-height: 270px; }
+        .teacher-table { width: 125px; }
+        .door { right: 12px; }
+        .window-left { left: 7px; }
+        .window-right { right: 7px; }
+        .board { width: 43%; height: 53px; }
+    }
+</style>
+</head>
+<body>
+<!-- Стартовое уведомление показывается 10 секунд при открытии сайта. -->
+<div class="notice-screen" id="noticeScreen">
+    <div class="notice-box">
+        <div class="notice-label">Важное пояснение</div>
+        <h2>Рассадка создана для спокойной работы в классе</h2>
+        <p>
+            Данная схема рассадки была разработана как организационная мера,
+            направленная на то, чтобы сделать учебный процесс в классе более спокойным,
+            организованным и комфортным для всех учеников. Необходимость изменить
+            рассадку возникла из-за шума, частых разговоров и отвлечений во время уроков,
+            которые могут мешать как учителю, так и самим ученикам сосредоточиться на
+            учебном материале.
+            <br><br>
+            При составлении схемы был использован принцип чередования
+            «мальчик — девочка». Это сделано исключительно как способ организации
+            мест и не означает каких-либо личных выводов о характере, поведении,
+            успеваемости или отношении к конкретным ученикам.
+            <br><br>
+            Рассадка не направлена против кого-либо и не является наказанием.
+            В ней нет скрытых намёков, личных претензий, дискриминации или
+            предвзятого отношения. Каждое место является частью общей схемы,
+            созданной для поддержания порядка и более спокойной атмосферы на уроках.
+            Просьба воспринимать эту карту именно как удобный организационный
+            инструмент, а не как повод для конфликтов, обид или личных выводов.
+            <br><br>
+            Если в дальнейшем возникнет необходимость изменить расположение мест
+            по объективным организационным причинам, схема может быть пересмотрена.
+            Главная цель — чтобы на уроках было меньше лишнего шума и отвлечений,
+            а у каждого ученика была возможность спокойно заниматься.
+        </p>
+        <div class="notice-timer" id="noticeTimer">
+            Пожалуйста, внимательно ознакомься с информацией. Кнопка появится через 40 секунд.
+        </div>
+        <div class="notice-progress"></div>
+        <button class="notice-confirm" id="noticeConfirm" disabled>
+            Понятно, я прочитал
+        </button>
+    </div>
+</div>
+
+<div class="container">
+    <header>
+        <div class="header-card">
+            <div>
+                <div class="eyebrow">9 «Е» класс · карта кабинета</div>
+                <h1>Карта класса</h1>
+                <p class="subtitle">Найди своё место и соседа по парте</p>
+            </div>
+            <div class="header-actions">
+                <div class="pill">37 учеников · 19 парт</div>
+                <button class="theme-btn" id="themeToggle" aria-label="Переключить тему" title="Светлая / тёмная тема">☾</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Отдельные разделы сайта. -->
+        <nav class="section-nav" aria-label="Разделы сайта">
+            <button class="nav-btn active" data-section="searchSection">🔎 Поиск ученика</button>
+            <button class="nav-btn" data-section="roomSection">🏫 Кабинет</button>
+            <button class="nav-btn" data-section="mapSection">🪑 Рассадка</button>
+        </nav>
+
+        <section class="page-section active" id="searchSection">
+        <section class="search-section" aria-label="Поиск ученика">
+            <div class="search-box">
+                <span class="search-icon">⌕</span>
+                <input id="searchInput" type="text" autocomplete="off"
+                       placeholder="Введите фамилию или имя ученика…"
+                       aria-label="Поиск ученика">
+                <button class="clear-search" id="clearSearch" aria-label="Сбросить поиск">×</button>
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+            <div class="search-hint">Можно искать без учёта регистра</div>
+        </section>
+
+        <section class="info-panel" id="infoPanel" aria-live="polite">
+            <div class="info-top">
+                <div>
+                    <h2 class="student-title" id="infoName">—</h2>
+                    <p class="student-position" id="infoPosition">—</p>
+                </div>
+                <button class="reset-btn" id="resetBtn">Сбросить</button>
+            </div>
+            <div class="info-grid">
+                <div class="info-item"><span>Ряд</span><strong id="infoRow">—</strong></div>
+                <div class="info-item"><span>Парта</span><strong id="infoDesk">—</strong></div>
+                <div class="info-item"><span>Сторона</span><strong id="infoSide">—</strong></div>
+                <div class="info-item"><span>№ по списку</span><strong id="infoNumber">—</strong></div>
+            </div>
+        </section>
+        </section>
+
+        <section class="page-section" id="roomSection">
+        <section class="room-card">
+            <div class="section-heading">
+                <div>
+                    <h2>Схема кабинета</h2>
+                    <p>Вид сверху · доска впереди, окна по бокам, дверь сзади</p>
+                </div>
+            </div>
+            <div class="room" aria-label="Схематичное изображение кабинета">
+                <div class="room-label">Кабинет 9 «Е»</div>
+                <div class="window window-left" title="Окна"></div>
+                <div class="window window-right" title="Окна"></div>
+                <div class="board"></div>
+                <div class="teacher-table"></div>
+                <div class="door"></div>
+                <div class="room-note">Окна</div>
+            </div>
+        </section>
+        </section>
+
+        <section class="page-section" id="mapSection">
+        <section class="map-card">
+            <div class="section-heading">
+                <div>
+                    <h2>Рассадка учеников</h2>
+                    <p>Нажми на любое имя, чтобы открыть подробную информацию</p>
+                </div>
+            </div>
+            <div class="map-wrap">
+                <div class="map" id="map"></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-dot dot-wood"></span> Парта</div>
+                <div class="legend-item"><span class="legend-dot dot-selected"></span> Выбранный ученик</div>
+                <div class="legend-item"><span class="legend-dot dot-empty"></span> Пустое место</div>
+            </div>
+        </section>
+        </section>
+    </main>
+
+    <footer>Карта мест одноклассников · работает полностью офлайн</footer>
+</div>
+
+<script>
+/* =========================================================
+   ДАННЫЕ УЧЕНИКОВ
+   Номер по списку присвоен в том порядке, в котором ученики
+   указаны в заданной схеме рассадки.
+   ========================================================= */
+const students = [
+    // Ряд 1
+    { id: 1, row: 1, desk: 1, side: "left",  name: "Хикматуллаев Нодиржон" },
+    { id: 2, row: 1, desk: 1, side: "right", name: "Якубова Азиза" },
+    { id: 3, row: 1, desk: 2, side: "left",  name: "Аззамкулова Шахина" },
+    { id: 4, row: 1, desk: 2, side: "right", name: "Абдулганиев Марлен" },
+    { id: 5, row: 1, desk: 3, side: "left",  name: "Абдуллаев Тимур" },
+    { id: 6, row: 1, desk: 3, side: "right", name: "Салимова Эъзоза" },
+    { id: 7, row: 1, desk: 4, side: "left",  name: "Сайфуллаева Нилуфар" },
+    { id: 8, row: 1, desk: 4, side: "right", name: "Шакиров Амин" },
+    { id: 9, row: 1, desk: 5, side: "left",  name: "Карпов Максим" },
+    { id: 10, row: 1, desk: 5, side: "right", name: "Лотренко Камила" },
+    { id: 11, row: 1, desk: 6, side: "left",  name: "Батирова Асия" },
+    { id: 12, row: 1, desk: 6, side: "right", name: "Морозов Руслан" },
+
+    // Ряд 2 — 7-я парта сохранена
+    { id: 13, row: 2, desk: 1, side: "left",  name: "Ниматиллаева Муслима" },
+    { id: 14, row: 2, desk: 1, side: "right", name: "Юсупов Азиз" },
+    { id: 15, row: 2, desk: 2, side: "left",  name: "Асанов Муслим" },
+    { id: 16, row: 2, desk: 2, side: "right", name: "Бахтиярова Ясмина" },
+    { id: 17, row: 2, desk: 3, side: "left",  name: "Махмудова Шахризода" },
+    { id: 18, row: 2, desk: 3, side: "right", name: "Левченко Владимир" },
+    { id: 19, row: 2, desk: 4, side: "left",  name: "Клименков Даниил" },
+    { id: 20, row: 2, desk: 4, side: "right", name: "Абдусаломов Абдулфайз" },
+    { id: 21, row: 2, desk: 5, side: "left",  name: "Ахаткулова Паризода" },
+    { id: 22, row: 2, desk: 5, side: "right", name: "Батталов Никита" },
+    { id: 23, row: 2, desk: 6, side: "left",  name: "Махрамкулова Нилуфар" },
+    { id: 24, row: 2, desk: 6, side: "right", name: "Джалалов Саидакмаль" },
+    { id: 25, row: 2, desk: 7, side: "left",  name: "Глухов Тимур" },
+    { id: 26, row: 2, desk: 7, side: "right", name: "" },
+
+    // Ряд 3
+    { id: 27, row: 3, desk: 1, side: "left",  name: "Сиражидинова Хадича" },
+    { id: 28, row: 3, desk: 1, side: "right", name: "Иванов Артём" },
+    { id: 29, row: 3, desk: 2, side: "left",  name: "Каримова Самира" },
+    { id: 30, row: 3, desk: 2, side: "right", name: "Лётов Егор" },
+    { id: 31, row: 3, desk: 3, side: "left",  name: "Азимов Мухаммаджон" },
+    { id: 32, row: 3, desk: 3, side: "right", name: "Напасов Дильбек" },
+    { id: 33, row: 3, desk: 4, side: "left",  name: "Рауфов Равшан" },
+    { id: 34, row: 3, desk: 4, side: "right", name: "Алланов Саидильхом" },
+    { id: 35, row: 3, desk: 5, side: "left",  name: "Ахаджанова Маржона" },
+    { id: 36, row: 3, desk: 5, side: "right", name: "Салеев Натан" },
+    { id: 37, row: 3, desk: 6, side: "left",  name: "Иззатбоев Самир" },
+    { id: 38, row: 3, desk: 6, side: "right", name: "Рахимова Ильмира" }
+];
+
+/* Исправляем отображаемый номер списка: пустое место не является учеником. */
+students.find(s => s.name === "").id = null;
+const namedStudents = students.filter(s => s.name);
+namedStudents.forEach((s, i) => s.listNumber = i + 1);
+
+/* =========================
+   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+   ========================= */
+const normalize = text => text
+    .toLocaleLowerCase("ru-RU")
+    .replace(/ё/g, "е")
+    .replace(/ъ/g, "")
+    .trim();
+
+const getStudent = name => namedStudents.find(s => s.name === name);
+
+function getSeat(row, desk, side) {
+    return students.find(s => s.row === row && s.desk === desk && s.side === side);
+}
+
+function shortName(name) {
+    const parts = name.split(" ");
+    return parts.length > 1 ? parts[0] + " " + parts.slice(1).map(p => p[0] + ".").join("") : name;
+}
+
+/* =========================
+   ПОСТРОЕНИЕ КАРТЫ
+   ========================= */
+const map = document.getElementById("map");
+
+[1, 2, 3].forEach(rowNumber => {
+    const column = document.createElement("div");
+    column.className = "row-column";
+
+    const desks = [...new Set(students.filter(s => s.row === rowNumber).map(s => s.desk))].sort((a,b) => a-b);
+
+    const title = document.createElement("div");
+    title.className = "row-title";
+    title.innerHTML = `<span>Ряд ${rowNumber}</span><span>${desks.length} ${desks.length === 1 ? "парта" : "парты"}</span>`;
+    column.appendChild(title);
+
+    desks.forEach(deskNumber => {
+        const desk = document.createElement("div");
+        desk.className = "desk";
+
+        const number = document.createElement("div");
+        number.className = "desk-number";
+        number.textContent = `Парта ${deskNumber}`;
+        desk.appendChild(number);
+
+        ["left", "right"].forEach(side => {
+            const seatData = getSeat(rowNumber, deskNumber, side);
+            const seat = document.createElement("div");
+            seat.className = "seat";
+
+            if (seatData && seatData.name) {
+                seat.classList.add("student-seat");
+                seat.dataset.name = seatData.name;
+                seat.title = `Открыть информацию: ${seatData.name}`;
+                seat.textContent = seatData.name;
+                seat.addEventListener("click", () => selectStudent(seatData));
+            } else {
+                seat.classList.add("empty");
+                seat.textContent = "—";
+                seat.title = "Пустое место";
+            }
+
+            desk.appendChild(seat);
+        });
+
+        column.appendChild(desk);
+    });
+
+    map.appendChild(column);
+});
+
+/* =========================
+   ИНФОРМАЦИОННАЯ ПАНЕЛЬ
+   ========================= */
+const infoPanel = document.getElementById("infoPanel");
+const searchInput = document.getElementById("searchInput");
+const clearSearch = document.getElementById("clearSearch");
+const suggestions = document.getElementById("suggestions");
+
+function selectStudent(student) {
+    if (!student) return;
+
+    searchInput.value = student.name;
+    clearSearch.style.display = "block";
+    suggestions.style.display = "none";
+
+    document.querySelectorAll(".seat.selected").forEach(el => el.classList.remove("selected"));
+    const selectedSeat = document.querySelector(`.seat[data-name="${CSS.escape(student.name)}"]`);
+    if (selectedSeat) {
+        selectedSeat.classList.add("selected");
+        selectedSeat.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+    }
+
+    document.getElementById("infoName").textContent = student.name;
+    document.getElementById("infoPosition").textContent =
+        `Ряд ${student.row} · парта ${student.desk} · ${student.side === "left" ? "левая сторона" : "правая сторона"}`;
+
+    document.getElementById("infoRow").textContent = `№ ${student.row}`;
+    document.getElementById("infoDesk").textContent = `№ ${student.desk}`;
+    document.getElementById("infoSide").textContent = student.side === "left" ? "Левая" : "Правая";
+    document.getElementById("infoNumber").textContent = `№ ${student.listNumber}`;
+
+    infoPanel.classList.add("show");
+}
+
+/* =========================
+   СТАРТОВОЕ УВЕДОМЛЕНИЕ И РАЗДЕЛЫ
+   ========================= */
+const noticeScreen = document.getElementById("noticeScreen");
+
+/* После 40 секунд кнопка подтверждения становится доступной.
+   Дисклеймер не закрывается сам — пользователь сам подтверждает,
+   что ознакомился с текстом. */
+const noticeConfirm = document.getElementById("noticeConfirm");
+const noticeTimer = document.getElementById("noticeTimer");
+
+setTimeout(() => {
+    noticeConfirm.disabled = false;
+    noticeConfirm.classList.add("ready");
+    noticeTimer.textContent = "Теперь можно закрыть пояснение.";
+}, 40000);
+
+noticeConfirm.addEventListener("click", () => {
+    if (noticeConfirm.disabled) return;
+    noticeScreen.classList.add("hide");
+});
+
+/* Переключение разделов без перезагрузки страницы. */
+document.querySelectorAll(".nav-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        const targetId = button.dataset.section;
+
+        document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
+        document.querySelectorAll(".page-section").forEach(section => section.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(targetId).classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+});
+
+/* =========================
+   ПОИСК И АВТОДОПОЛНЕНИЕ
+   ========================= */
+function updateSuggestions() {
+    const query = normalize(searchInput.value);
+    clearSearch.style.display = searchInput.value ? "block" : "none";
+
+    if (!query) {
+        suggestions.style.display = "none";
+        return;
+    }
+
+    const matches = namedStudents
+        .filter(s => normalize(s.name).includes(query))
+        .slice(0, 8);
+
+    suggestions.innerHTML = "";
+
+    if (!matches.length) {
+        suggestions.innerHTML = `<div style="padding:13px;color:var(--muted);font-size:13px;">Ученик не найден</div>`;
+        suggestions.style.display = "block";
+        return;
+    }
+
+    matches.forEach(student => {
+        const btn = document.createElement("button");
+        btn.className = "suggestion";
+        btn.innerHTML = `<span>${student.name}</span><small>Ряд ${student.row}, парта ${student.desk}</small>`;
+        btn.addEventListener("click", () => selectStudent(student));
+        suggestions.appendChild(btn);
+    });
+
+    suggestions.style.display = "block";
+
+    /* Если введено точное ФИО — сразу открываем карточку. */
+    const exact = namedStudents.find(s => normalize(s.name) === query);
+    if (exact) selectStudent(exact);
+}
+
+searchInput.addEventListener("input", updateSuggestions);
+
+searchInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        const query = normalize(searchInput.value);
+        const exact = namedStudents.find(s => normalize(s.name) === query);
+        const first = namedStudents.find(s => normalize(s.name).includes(query));
+        if (exact || first) selectStudent(exact || first);
+    }
+});
+
+clearSearch.addEventListener("click", resetAll);
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+function resetAll() {
+    searchInput.value = "";
+    clearSearch.style.display = "none";
+    suggestions.style.display = "none";
+    infoPanel.classList.remove("show");
+    document.querySelectorAll(".seat.selected").forEach(el => el.classList.remove("selected"));
+    searchInput.focus();
+}
+
+document.addEventListener("click", e => {
+    if (!e.target.closest(".search-box")) suggestions.style.display = "none";
+});
+
+/* =========================
+   ТЁМНАЯ / СВЕТЛАЯ ТЕМА
+   ========================= */
+const themeToggle = document.getElementById("themeToggle");
+
+function setTheme(dark) {
+    document.documentElement.classList.toggle("dark", dark);
+    themeToggle.textContent = dark ? "☀" : "☾";
+    themeToggle.title = dark ? "Включить светлую тему" : "Включить тёмную тему";
+    localStorage.setItem("classMapTheme", dark ? "dark" : "light");
+}
+
+const savedTheme = localStorage.getItem("classMapTheme");
+setTheme(savedTheme === "dark");
+
+themeToggle.addEventListener("click", () => {
+    setTheme(!document.documentElement.classList.contains("dark"));
+});
+</script>
+</body>
+</html>
